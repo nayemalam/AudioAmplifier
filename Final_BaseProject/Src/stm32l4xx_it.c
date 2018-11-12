@@ -37,7 +37,7 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN 0 */
-extern int tim3_flag;
+extern int tim2_flag;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -192,7 +192,7 @@ void TIM2_IRQHandler(void)
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);
   /* USER CODE BEGIN TIM2_IRQn 1 */
-
+	tim2_flag = 1;
   /* USER CODE END TIM2_IRQn 1 */
 }
 

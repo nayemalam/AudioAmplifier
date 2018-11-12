@@ -51,6 +51,7 @@
 #include "stm32l4xx_hal.h"
 #include "cmsis_os.h"
 
+
 /* USER CODE BEGIN Includes */
 #include "arm_math.h"
 #include "stm32l475e_iot01_qspi.h"
@@ -72,7 +73,11 @@ osThreadId defaultTaskHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-int tim3_flag = 0;
+int tim2_flag = 0;
+int sample_time;
+int sampling_time = 16000;
+float32_t angle;
+float32_t sine_sample;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -111,7 +116,7 @@ int fgetc(FILE *f) {
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	
+	sample_time = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -177,8 +182,23 @@ int main(void)
 	
 	while (1)
   {
-  /* USER CODE END WHILE */
-
+		if(tim2_flag == 1 ){
+			tim2_flag =0;
+			
+			if(sample_time == sampling_time){
+				sample_time = 0;
+			}else{
+				// Compute value for the angle and compute sine wave sample
+				angle = 2 * PI * (sample_time/sampling_time);
+				sine_sample = arm_sin_f32(angle);
+				
+				// Write that value to the DAC
+				
+				
+				sample_time++;
+			}
+		}
+  /* USER CODE END WHILE */	
   /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -386,7 +406,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 0;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 0;
+  htim2.Init.Period = 5000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
