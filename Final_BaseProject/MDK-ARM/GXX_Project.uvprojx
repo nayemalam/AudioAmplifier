@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32L475xx ARM_MATH_CM4 __FPU_PRESENT,STM32L475xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;  ../Drivers/STM32L4xx_HAL_Driver/Inc;  ../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy;  ../Drivers/CMSIS/Device/ST/STM32L4xx/Include;  ../Drivers/CMSIS/Include;  ../Drivers/B-L475E-IOT01/Inc;  ..\Drivers\B-L475E-IOT01\Components\hts221;  ..\Drivers\B-L475E-IOT01\Components\lis3mdl;  ..\Drivers\B-L475E-IOT01\Components\lps22hb;  ..\Drivers\B-L475E-IOT01\Components\lsm6dsl;  ..\Drivers\B-L475E-IOT01\Components\mx25r6435f;  ..\Drivers\B-L475E-IOT01\Components\Common; ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F; ../Middlewares/Third_Party/FreeRTOS/Source/include; ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS</IncludePath>
+              <IncludePath>../Inc;   ../Drivers/STM32L4xx_HAL_Driver/Inc;   ../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy;   ../Drivers/CMSIS/Device/ST/STM32L4xx/Include;   ../Drivers/CMSIS/Include;   ../Drivers/B-L475E-IOT01/Inc;   ..\Drivers\B-L475E-IOT01\Components\hts221;   ..\Drivers\B-L475E-IOT01\Components\lis3mdl;   ..\Drivers\B-L475E-IOT01\Components\lps22hb;   ..\Drivers\B-L475E-IOT01\Components\lsm6dsl;   ..\Drivers\B-L475E-IOT01\Components\mx25r6435f;   ..\Drivers\B-L475E-IOT01\Components\Common;  ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;  ../Middlewares/Third_Party/FreeRTOS/Source/include;  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -422,6 +422,11 @@
         <Group>
           <GroupName>Drivers/STM32L4xx_HAL_Driver</GroupName>
           <Files>
+            <File>
+              <FileName>stm32l4xx_hal_qspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_qspi.c</FilePath>
+            </File>
             <File>
               <FileName>stm32l4xx_hal_dac.c</FileName>
               <FileType>1</FileType>
@@ -526,11 +531,6 @@
               <FileName>stm32l4xx_hal_cortex.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32l4xx_hal_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_qspi.c</FilePath>
             </File>
           </Files>
         </Group>
