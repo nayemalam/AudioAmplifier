@@ -72,6 +72,7 @@ osThreadId defaultTaskHandle;
 /* Private variables ---------------------------------------------------------*/
 int tim3_flag = 0;
 int flag = 0;
+int freq = 440; //frequency of the sine wave 
 int sample_time;
 float32_t sampling_time = 16000;
 float32_t angle;
@@ -188,7 +189,7 @@ int main(void)
 			}
 			
 				// Compute value for the angle and compute sine wave sample
-				angle = 2 * PI *440*(sample_time/sampling_time);///sampling_time);
+				angle = 2 * PI *freq*(sample_time/sampling_time);///sampling_time);
 				
 				sine_sample = arm_sin_f32(angle);
 				
