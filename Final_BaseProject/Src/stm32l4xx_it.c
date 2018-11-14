@@ -44,6 +44,7 @@ extern int flag;
 /* External variables --------------------------------------------------------*/
 
 extern TIM_HandleTypeDef htim17;
+extern QSPI_HandleTypeDef hqspi;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -150,6 +151,20 @@ void DebugMon_Handler(void)
 /**
 * @brief This function handles System tick timer.
 */
+
+/**
+* @brief This function handles QUADSPI global interrupt.
+*/
+void QUADSPI_IRQHandler(void)
+{
+  /* USER CODE BEGIN QUADSPI_IRQn 0 */
+
+  /* USER CODE END QUADSPI_IRQn 0 */
+  HAL_QSPI_IRQHandler(&hqspi);
+  /* USER CODE BEGIN QUADSPI_IRQn 1 */
+
+  /* USER CODE END QUADSPI_IRQn 1 */
+}
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */

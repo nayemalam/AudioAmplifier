@@ -63,6 +63,7 @@ DFSDM_Filter_HandleTypeDef hdfsdm1_filter0;
 DFSDM_Filter_HandleTypeDef hdfsdm1_filter1;
 DFSDM_Channel_HandleTypeDef hdfsdm1_channel1;
 DFSDM_Channel_HandleTypeDef hdfsdm1_channel2;
+QSPI_HandleTypeDef hqspi;
 
 UART_HandleTypeDef huart1;
 
@@ -72,12 +73,20 @@ osThreadId defaultTaskHandle;
 /* Private variables ---------------------------------------------------------*/
 int tim3_flag = 0;
 int flag = 0;
-int freq = 440; //frequency of the sine wave 
+uint8_t data;
+int freqc4 = 261; //frequency of the sine wave 
+int freqg4 = 392;
 int sample_time;
+uint8_t test = 8;
+uint8_t receive_sigc4;
+uint8_t receive_sigg4;
 float32_t sampling_time = 16000;
 float32_t angle;
 float32_t sine_sample;
-int b ;
+int b;
+int i;
+float a11 = 0.5, a12 = 0.5, a21= 0.5, a22 = 0.5;
+uint8_t x1, x2;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,6 +96,8 @@ static void MX_USART1_UART_Init(void);
 static void MX_DFSDM1_Init(void);
 static void MX_DAC1_Init(void);
 void StartDefaultTask(void const * argument);
+static void MX_QUADSPI_Init(void);
+
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -139,10 +150,16 @@ int main(void)
   MX_USART1_UART_Init();
   MX_DFSDM1_Init();
   MX_DAC1_Init();
+	MX_QUADSPI_Init();
+
   /* USER CODE BEGIN 2 */
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_1);
 	HAL_DAC_Start(&hdac1, DAC_CHANNEL_2);
-  /* USER CODE END 2 */
+	
+	BSP_QSPI_Init();   // init the qspi memory
+	BSP_QSPI_Erase_Chip();
+ 
+ /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -177,34 +194,68 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	// Store sine wave samples in flash mem starting from address 0x00
+	for(i = 0; i < sampling_time*2; i++){
+		
+		// Compute value for the angle and compute sine wave sample
+		angle = 2 * PI *freqc4*(i/sampling_time);///sampling_time);
+		
+		sine_sample = arm_sin_f32(angle);
+		
+		// Shift value of angle to get only positives
+		sine_sample = sine_sample + 1;
+		// Map to 12bits by multiply by 2048, subtract 1
+		sine_sample = ((sine_sample * 256/2) - 1);
+		data = sine_sample;
+		BSP_QSPI_Write(&data, i, 1);
+		
+	}
+	for(i = 0; i < sampling_time*2; i++){
+		
+		// Compute value for the angle and compute sine wave sample
+		angle = 2 * PI *freqg4*(i/sampling_time);///sampling_time);
+		
+		sine_sample = arm_sin_f32(angle);
+		
+		// Shift value of angle to get only positives
+		sine_sample = sine_sample + 1;
+		// Map to 12bits by multiply by 2048, subtract 1
+		sine_sample = ((sine_sample * 256/2) - 1);
+		data = sine_sample;
+		BSP_QSPI_Write(&data, i+(sampling_time*2), 1);
+		
+	}
 	
 	while (1)
   {
   /* USER CODE END WHILE */
-		if(flag == 1 ){
+		
+		// If interrupted by systick
+		if(flag == 1){
 			flag =0;
 			
-			if(sample_time - 1 == sampling_time){
+			if(sample_time - 1 == sampling_time*2){
 				sample_time = 0;
 			}
 			
-				// Compute value for the angle and compute sine wave sample
-				angle = 2 * PI *freq*(sample_time/sampling_time);///sampling_time);
 				
-				sine_sample = arm_sin_f32(angle);
-				
-				// Shift value of angle to get only positives
-				sine_sample = sine_sample + 1;
-				// Map to 12bits by multiply by 2048, subtract 1
-				sine_sample = ((sine_sample * 4096/2) - 1);
-				
+				BSP_QSPI_Read(&receive_sigc4,sample_time,1);
+				BSP_QSPI_Read(&receive_sigg4,sample_time + 32000, 1);
 				// Write that value to the DAC
-				HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, sine_sample);
-				HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, sine_sample);
-				
+			
+			
+				x1 = a11*receive_sigc4 + a12*receive_sigg4;
+				x2 = a21*receive_sigc4 + a22*receive_sigg4;
+				HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_8B_R, x1);
+				HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_8B_R, x2);
 				sample_time++;
 			
+		  //BSP_QSPI_Read(&testreceive , 0x90000000, 1);
+		
+			
 		}
+		
+		
 		
   /* USER CODE BEGIN 3 */
   }
@@ -316,6 +367,7 @@ static void MX_DAC1_Init(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
+	
     /**DAC channel OUT2 config 
     */
   sConfig.DAC_ConnectOnChipPeripheral = DAC_CHIPCONNECT_DISABLE;
@@ -326,6 +378,24 @@ static void MX_DAC1_Init(void)
 
 }
 
+/* QUADSPI init function */
+static void MX_QUADSPI_Init(void)
+{
+
+  /* QUADSPI parameter configuration*/
+  hqspi.Instance = QUADSPI;
+  hqspi.Init.ClockPrescaler = 255;
+  hqspi.Init.FifoThreshold = 1;
+  hqspi.Init.SampleShifting = QSPI_SAMPLE_SHIFTING_NONE;
+  hqspi.Init.FlashSize = 1;
+  hqspi.Init.ChipSelectHighTime = QSPI_CS_HIGH_TIME_1_CYCLE;
+  hqspi.Init.ClockMode = QSPI_CLOCK_MODE_0;
+  if (HAL_QSPI_Init(&hqspi) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
 /* DFSDM1 init function */
 static void MX_DFSDM1_Init(void)
 {
