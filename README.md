@@ -2,14 +2,15 @@
 Final project for ECSE 444, microcontrollers.
 
 ## Team Members <br/>
-Tristan Bouchard <br/>
-Alex Masciotra <br/>
-Thomas Philippon <br/>
-Nayem Alam <br/>
-
+<ul>
+        <li>Tristan Bouchard</li>
+        <li>Alex Masciotra</li>
+        <li>Thomas Philippon</li>
+        <li>Nayem Alam</li>
+</ul>
 ------
 
-## _Blind Source Separation Using ICA_ 
+## _Blind Source Separation Using ICA Report_
 #### ECSE444 - Microprocessors
 
 Nayem Alam (260743549)
