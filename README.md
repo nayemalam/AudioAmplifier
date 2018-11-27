@@ -1,5 +1,6 @@
-# ECSE_444_Final_Project
-Final project for ECSE 444, microcontrollers.
+# ECSE 444 Final Project
+Final project for ECSE 444, microcontrollers. <br/>
+#### Creation of an audio application using FastICA
 
 ## Team Members <br/>
 <ul>
