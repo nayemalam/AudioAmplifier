@@ -8,7 +8,6 @@ Final project for ECSE 444, microcontrollers.
         <li>Thomas Philippon</li>
         <li>Nayem Alam</li>
 </ul>
-------
 
 ## _Blind Source Separation Using ICA Report_
 #### ECSE444 - Microprocessors
