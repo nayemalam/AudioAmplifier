@@ -14,12 +14,14 @@ Final project for ECSE 444, microcontrollers. <br/>
 #### ECSE444 - Microprocessors
 
 <p align="center">
+	
 | Name             | ID       |
 |------------------|----------|
 | Nayem Alam       | 260743549| 
 | Tristan Bouchard | 260747124| 
 | Alex Masciotra   | 260746829| 
 | Thomas Philippon | 260747645| 
+
 </p>
 
 
